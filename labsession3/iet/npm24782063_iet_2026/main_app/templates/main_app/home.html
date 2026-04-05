@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistem Pelaporan Kampus Politeknik Negeri Lampung</title>
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --shadow: 0 20px 45px rgba(15, 23, 42, 0.10);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(13, 148, 136, 0.18), transparent 30%),
+                linear-gradient(135deg, #eef6ff 0%, #f7fbff 50%, #f2fdf8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .hero {
+            width: 100%;
+            max-width: 780px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 48px;
+        }
+
+        .eyebrow {
+            margin: 0 0 12px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.82rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.1;
+        }
+
+        p {
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 620px;
+        }
+
+        .actions {
+            margin: 32px 0 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 220px;
+            padding: 14px 22px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .actions a:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary-link {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 14px 28px rgba(15, 118, 110, 0.22);
+        }
+
+        .primary-link:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-link {
+            background: #ecfeff;
+            color: var(--primary-dark);
+            border: 1px solid #a5f3fc;
+        }
+
+        .secondary-link:hover {
+            box-shadow: 0 10px 24px rgba(8, 145, 178, 0.14);
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 32px 24px;
+            }
+
+            .actions a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="hero">
+        <p class="eyebrow">Sistem Pelaporan Kampus Politeknik Negeri Lampung</p>
+        <h1>Selamat Datang di Sistem Pelaporan Masalah Kampus Politeknik Negeri Lampung</h1>
+        <p>
+            Laporkan masalah di lingkungan kampus Politeknik Negeri Lampung dengan cepat dan lihat daftar laporan yang sudah masuk
+            dalam satu halaman yang lebih rapi dan mudah digunakan.
+        </p>
+
+        <ul class="actions">
+            <li><a class="primary-link" href="{% url 'add_report' %}">Tambahkan Laporan</a></li>
+            <li><a class="secondary-link" href="{% url 'report_list' %}">Cek Laporan</a></li>
+        </ul>
+    </main>
+</body>
+</html>
