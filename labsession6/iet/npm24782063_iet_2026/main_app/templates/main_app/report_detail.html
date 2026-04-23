@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Laporan | IET City{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detail</li>
+    </ol>
+</nav>
+
+<section class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="premium-panel">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+                    <div>
+                        <span class="section-kicker mb-2">Report Detail</span>
+                        <h1 class="h2 fw-bold mb-2">{{ report.title }}</h1>
+                        <p class="text-secondary mb-0">
+                            Detail lengkap laporan untuk membantu proses pemantauan dan tindak lanjut.
+                        </p>
+                    </div>
+                    <div>
+                        {% if report.status == 'REPORTED' %}
+                            <span class="badge status-pill status-reported fs-6">Reported</span>
+                        {% elif report.status == 'VERIFIED' %}
+                            <span class="badge status-pill status-verified fs-6">Verified</span>
+                        {% elif report.status == 'IN_PROGRESS' %}
+                            <span class="badge status-pill status-progress fs-6">In Progress</span>
+                        {% elif report.status == 'RESOLVED' %}
+                            <span class="badge status-pill status-resolved fs-6">Resolved</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h2 class="h6 text-secondary mb-2">Kategori</h2>
+                            <p class="mb-0 fw-semibold">{{ report.category }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h2 class="h6 text-secondary mb-2">Lokasi</h2>
+                            <p class="mb-0 fw-semibold">{{ report.location }}</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-block">
+                            <h2 class="h6 text-secondary mb-2">Deskripsi</h2>
+                            <p class="mb-0">{{ report.description }}</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-block">
+                            <h2 class="h6 text-secondary mb-2">Dibuat pada</h2>
+                            <p class="mb-0">{{ report.created_at }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <a class="btn btn-outline-primary" href="{% url 'report_list' %}">
+                        <i class="bi bi-arrow-left me-2"></i>Kembali ke Daftar
+                    </a>
+                    {% if user.is_authenticated and user.is_admin %}
+                        <a class="btn btn-outline-secondary" href="{% url 'edit_report' report.id %}">
+                            <i class="bi bi-pencil-square me-2"></i>Edit
+                        </a>
+                        <a class="btn btn-outline-danger" href="{% url 'delete_report' report.id %}">
+                            <i class="bi bi-trash me-2"></i>Hapus
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if user.is_authenticated and user.is_admin %}
+                    {% if report.status == 'REPORTED' %}
+                        <form
+                            class="mt-4"
+                            method="post"
+                            action="{% url 'update_report_status' report.id %}"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi Verified?');"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="VERIFIED">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-check-circle me-2"></i>Ubah ke Verified
+                            </button>
+                        </form>
+                    {% elif report.status == 'VERIFIED' %}
+                        <form
+                            class="mt-4"
+                            method="post"
+                            action="{% url 'update_report_status' report.id %}"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi In Progress?');"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="IN_PROGRESS">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-arrow-repeat me-2"></i>Ubah ke In Progress
+                            </button>
+                        </form>
+                    {% elif report.status == 'IN_PROGRESS' %}
+                        <form
+                            class="mt-4"
+                            method="post"
+                            action="{% url 'update_report_status' report.id %}"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi Resolved?');"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="RESOLVED">
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-check2-all me-2"></i>Ubah ke Resolved
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

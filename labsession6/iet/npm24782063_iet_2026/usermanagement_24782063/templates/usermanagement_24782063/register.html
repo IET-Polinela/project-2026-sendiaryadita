@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Register | IET City{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Register</li>
+    </ol>
+</nav>
+
+<section class="row justify-content-center">
+    <div class="col-12 col-lg-9 col-xl-7">
+        <div class="form-panel">
+            <div class="card-body p-4 p-md-5">
+                <span class="section-kicker mb-3">Citizen Account</span>
+                <h1 class="h2 fw-bold mb-2">Buat Akun Citizen</h1>
+                <p class="text-secondary mb-4">
+                    Daftar akun citizen untuk melihat laporan dan menggunakan akses aplikasi sesuai hak pengguna umum.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors|striptags }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="small text-secondary mt-1">
+                                    {{ field.help_text|safe }}
+                                </div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-person-plus me-2"></i>Daftar
+                        </button>
+                        <a class="btn btn-outline-secondary" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Ke Login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
