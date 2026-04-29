@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact | KANADA CITY{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contact</li>
+    </ol>
+</nav>
+
+<section class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="premium-panel">
+            <div class="card-body p-4 p-md-5">
+                <span class="section-kicker mb-3">Contact</span>
+                <h1 class="h2 fw-bold mb-3">Halaman Kontak</h1>
+                <p class="text-secondary mb-4">
+                    Jika ada pertanyaan terkait laporan atau penggunaan sistem, gunakan halaman ini
+                    sebagai informasi kontak aplikasi.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h2 class="h6 fw-semibold">Email</h2>
+                            <p class="text-secondary mb-0">sendi.aryadita78@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h2 class="h6 fw-semibold">Lokasi</h2>
+                            <p class="text-secondary mb-0">Politeknik Negeri Lampung</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

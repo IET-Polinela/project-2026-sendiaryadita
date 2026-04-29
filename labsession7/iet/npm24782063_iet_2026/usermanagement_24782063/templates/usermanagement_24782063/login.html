@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | KANADA CITY{% endblock %}
+
+{% block extra_head %}
+<style>
+    .auth-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+        min-height: 620px;
+        overflow: hidden;
+    }
+
+    .auth-brand-panel {
+        background:
+            linear-gradient(135deg, rgba(6, 77, 57, 0.96), rgba(8, 127, 91, 0.88)),
+            repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 14px);
+        color: #ffffff;
+        padding: 2.25rem;
+        position: relative;
+    }
+
+    .auth-brand-panel::after {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent);
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .auth-brand-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    .auth-logo {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 18px;
+        display: inline-flex;
+        height: 58px;
+        justify-content: center;
+        width: 58px;
+    }
+
+    .auth-logo i {
+        font-size: 1.7rem;
+    }
+
+    .auth-copy {
+        margin-top: auto;
+    }
+
+    .auth-copy h1 {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1;
+        margin-bottom: 1rem;
+        max-width: 480px;
+    }
+
+    .auth-copy p {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 1.02rem;
+        line-height: 1.7;
+        max-width: 430px;
+    }
+
+    .auth-stats {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 2rem;
+    }
+
+    .auth-stat {
+        background: rgba(255, 255, 255, 0.11);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 16px;
+        padding: 1rem;
+    }
+
+    .auth-stat-value {
+        display: block;
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .auth-stat-label {
+        color: rgba(255, 255, 255, 0.68);
+        display: block;
+        font-size: 0.82rem;
+        margin-top: 0.4rem;
+    }
+
+    .auth-form-panel {
+        align-items: center;
+        background: var(--surface);
+        display: flex;
+        padding: 2.25rem;
+    }
+
+    .auth-form-card {
+        margin: 0 auto;
+        max-width: 520px;
+        width: 100%;
+    }
+
+    .auth-form-card .form-label {
+        color: var(--brand-ink);
+        font-size: 0.92rem;
+    }
+
+    .auth-field {
+        position: relative;
+    }
+
+    .auth-field-icon {
+        color: var(--brand-muted);
+        left: 1rem;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+
+    .auth-field .form-control {
+        min-height: 58px;
+        padding-left: 2.85rem;
+    }
+
+    .auth-actions {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: 1fr auto;
+        margin-top: 1.5rem;
+    }
+
+    .auth-actions .btn {
+        min-height: 52px;
+    }
+
+    .auth-register-link {
+        background: var(--surface-soft);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        color: var(--brand-muted);
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+
+    .auth-register-link a {
+        color: var(--brand-primary-dark);
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    [data-theme="dark"] .auth-form-panel,
+    [data-theme="dark"] .auth-register-link {
+        background: var(--surface);
+    }
+
+    @media (max-width: 991.98px) {
+        .auth-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-brand-panel {
+            min-height: 360px;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .auth-brand-panel,
+        .auth-form-panel {
+            padding: 1.25rem;
+        }
+
+        .auth-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Login</li>
+    </ol>
+</nav>
+
+<section class="premium-panel auth-shell">
+    <div class="auth-brand-panel">
+        <div class="auth-brand-content">
+            <div class="auth-logo">
+                <i class="bi bi-buildings"></i>
+            </div>
+
+            <div class="auth-copy">
+                <span class="section-kicker mb-3">KANADA CITY</span>
+                <h1>Masuk ke pusat laporan kota.</h1>
+                <p>
+                    Pantau laporan, tinjau status penanganan, dan bantu menjaga layanan publik tetap tertata.
+                </p>
+
+                <div class="auth-stats">
+                    <div class="auth-stat">
+                        <span class="auth-stat-value">24/7</span>
+                        <span class="auth-stat-label">Akses pemantauan</span>
+                    </div>
+                    <div class="auth-stat">
+                        <span class="auth-stat-value">Live</span>
+                        <span class="auth-stat-label">Data laporan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-form-panel">
+        <div class="auth-form-card">
+            <span class="section-kicker mb-3">Authentication</span>
+            <h2 class="h1 fw-bold mb-2">Selamat datang kembali</h2>
+            <p class="text-secondary mb-4">
+                Gunakan akun kamu untuk mengakses fitur sesuai peran yang diberikan.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors|striptags }}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="auth-field">
+                            {% if field.name == 'username' %}
+                                <i class="bi bi-person auth-field-icon"></i>
+                            {% else %}
+                                <i class="bi bi-lock auth-field-icon"></i>
+                            {% endif %}
+                            {{ field }}
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ field.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                <div class="auth-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </button>
+                    <a class="btn btn-outline-secondary" href="{% url 'home' %}">
+                        <i class="bi bi-arrow-left me-2"></i>Kembali
+                    </a>
+                </div>
+            </form>
+
+            <div class="auth-register-link">
+                Belum punya akun citizen?
+                <a href="{% url 'register' %}">Daftar sekarang</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

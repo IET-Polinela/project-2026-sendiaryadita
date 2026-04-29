@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | KANADA CITY{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .summary-item,
+    .chart-panel,
+    .dashboard-table-panel {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 18px 46px rgba(8, 22, 29, 0.08);
+    }
+
+    .summary-item {
+        padding: 1.2rem;
+    }
+
+    .summary-label {
+        color: var(--brand-muted);
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .summary-value {
+        color: var(--brand-ink);
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-top: 0.5rem;
+    }
+
+    .chart-panel,
+    .dashboard-table-panel {
+        padding: 1.25rem;
+        height: 100%;
+    }
+
+    .chart-box {
+        position: relative;
+        min-height: 320px;
+    }
+
+    .dashboard-table-panel .table {
+        margin-bottom: 0;
+    }
+
+    .dashboard-table-panel td,
+    .dashboard-table-panel th {
+        vertical-align: middle;
+    }
+
+    .loading-row {
+        color: var(--brand-muted);
+        text-align: center;
+    }
+
+    @media (max-width: 991.98px) {
+        .dashboard-summary {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+</nav>
+
+<section class="spotlight-panel">
+    <div class="card-body p-4 p-md-5">
+        <span class="section-kicker mb-3">Dashboard</span>
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+            <div>
+                <h1 class="h2 fw-bold mb-2">Dashboard Statistik Laporan</h1>
+                <p class="text-secondary mb-0">
+                    Ringkasan status, kategori, dan laporan terbaru dari data yang masuk.
+                </p>
+            </div>
+            <a class="btn btn-outline-primary" href="{% url 'report_list' %}">
+                <i class="bi bi-card-list me-2"></i>Lihat Daftar Laporan
+            </a>
+        </div>
+
+        <div class="dashboard-summary">
+            <div class="summary-item">
+                <div class="summary-label">Total Laporan</div>
+                <div class="summary-value" id="totalReports">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Status Reported</div>
+                <div class="summary-value" id="reportedCount">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Status Resolved</div>
+                <div class="summary-value" id="resolvedCount">0</div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-xl-5">
+                <div class="chart-panel">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <h2 class="h5 fw-bold mb-1">Distribusi Status</h2>
+                            <p class="text-secondary mb-0">Persentase laporan pada setiap status.</p>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-7">
+                <div class="chart-panel">
+                    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <h2 class="h5 fw-bold mb-1">Distribusi Kategori</h2>
+                            <p class="text-secondary mb-0">Jumlah laporan dari tiap kategori.</p>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="dashboard-table-panel">
+                    <h2 class="h5 fw-bold mb-3">5 Laporan Terakhir Dilaporkan</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="latestReportedTable">
+                                <tr>
+                                    <td colspan="3" class="loading-row">Memuat data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="dashboard-table-panel">
+                    <h2 class="h5 fw-bold mb-3">5 Laporan Terakhir Selesai</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="latestResolvedTable">
+                                <tr>
+                                    <td colspan="3" class="loading-row">Memuat data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dashboardDataUrl = "{% url 'dashboard_data' %}";
+        const statusColors = {
+            REPORTED: '#6c7a86',
+            VERIFIED: '#0f8b8d',
+            IN_PROGRESS: '#f2b35d',
+            RESOLVED: '#31a354',
+        };
+        const statusClassMap = {
+            REPORTED: 'status-reported',
+            VERIFIED: 'status-verified',
+            IN_PROGRESS: 'status-progress',
+            RESOLVED: 'status-resolved',
+        };
+        let statusChart;
+        let categoryChart;
+
+        fetch(dashboardDataUrl)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data dashboard.');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log('Dashboard JSON:', data);
+                renderSummary(data);
+                renderStatusChart(data.status_distribution);
+                renderCategoryChart(data.category_distribution);
+                renderReportTable('latestReportedTable', data.latest_reported);
+                renderReportTable('latestResolvedTable', data.latest_resolved);
+                applyChartTheme();
+            })
+            .catch((error) => {
+                console.error(error);
+                renderErrorState();
+            });
+
+        function renderSummary(data) {
+            document.getElementById('totalReports').textContent = data.total_reports;
+            document.getElementById('reportedCount').textContent = data.status_distribution.counts[0] || 0;
+            document.getElementById('resolvedCount').textContent = data.status_distribution.counts[3] || 0;
+        }
+
+        function renderStatusChart(statusDistribution) {
+            const ctx = document.getElementById('statusChart');
+            const statusKeys = ['REPORTED', 'VERIFIED', 'IN_PROGRESS', 'RESOLVED'];
+
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: statusDistribution.labels,
+                    datasets: [{
+                        data: statusDistribution.percentages,
+                        backgroundColor: statusKeys.map((status) => statusColors[status]),
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getCssVariable('--brand-ink'),
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.label}: ${context.raw}%`,
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function renderCategoryChart(categoryDistribution) {
+            const ctx = document.getElementById('categoryChart');
+
+            categoryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categoryDistribution.labels,
+                    datasets: [{
+                        label: 'Jumlah laporan',
+                        data: categoryDistribution.counts,
+                        backgroundColor: '#0f8b8d',
+                        borderRadius: 8,
+                        maxBarThickness: 58,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: getChartGridColor(),
+                            },
+                            ticks: {
+                                color: getCssVariable('--brand-muted'),
+                                precision: 0,
+                            },
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                color: getCssVariable('--brand-muted'),
+                            },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                },
+            });
+        }
+
+        function renderReportTable(tableId, reports) {
+            const tableBody = document.getElementById(tableId);
+            tableBody.replaceChildren();
+
+            if (!reports.length) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 3;
+                cell.className = 'loading-row';
+                cell.textContent = 'Belum ada data.';
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+                return;
+            }
+
+            reports.forEach((report) => {
+                const row = document.createElement('tr');
+                const titleCell = document.createElement('td');
+                const categoryCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const title = document.createElement('div');
+                const location = document.createElement('div');
+                const badge = document.createElement('span');
+
+                title.className = 'fw-semibold';
+                title.textContent = report.title;
+                location.className = 'small text-secondary';
+                location.textContent = report.location;
+                titleCell.append(title, location);
+
+                categoryCell.textContent = report.category;
+
+                badge.className = `badge status-pill ${statusClassMap[report.status] || 'status-reported'}`;
+                badge.textContent = report.status_label;
+                statusCell.appendChild(badge);
+
+                row.append(titleCell, categoryCell, statusCell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        function renderErrorState() {
+            ['latestReportedTable', 'latestResolvedTable'].forEach((tableId) => {
+                const tableBody = document.getElementById(tableId);
+                tableBody.innerHTML = '<tr><td colspan="3" class="loading-row">Data dashboard belum bisa dimuat.</td></tr>';
+            });
+        }
+
+        function getCssVariable(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        function getChartGridColor() {
+            return document.documentElement.dataset.theme === 'dark'
+                ? 'rgba(180, 230, 207, 0.12)'
+                : 'rgba(16, 35, 31, 0.08)';
+        }
+
+        function applyChartTheme() {
+            const textColor = getCssVariable('--brand-ink');
+            const mutedColor = getCssVariable('--brand-muted');
+
+            if (statusChart) {
+                statusChart.options.plugins.legend.labels.color = textColor;
+                statusChart.data.datasets[0].borderColor = getCssVariable('--surface-strong');
+                statusChart.update();
+            }
+
+            if (categoryChart) {
+                categoryChart.options.scales.x.ticks.color = mutedColor;
+                categoryChart.options.scales.y.ticks.color = mutedColor;
+                categoryChart.options.scales.y.grid.color = getChartGridColor();
+                categoryChart.update();
+            }
+        }
+
+        window.addEventListener('kanada-theme-change', applyChartTheme);
+    });
+</script>
+{% endblock %}

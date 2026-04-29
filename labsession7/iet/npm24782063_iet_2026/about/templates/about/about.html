@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}About | KANADA CITY{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">About</li>
+    </ol>
+</nav>
+
+<section class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="premium-panel">
+            <div class="card-body p-4 p-md-5">
+                <span class="section-kicker mb-3">About</span>
+                <h1 class="h2 fw-bold mb-3">Tentang KANADA CITY</h1>
+                <p class="text-secondary mb-3">
+                    KANADA CITY adalah aplikasi pelaporan masalah kota yang membantu pengguna mencatat,
+                    memantau, dan meninjau laporan secara lebih terstruktur.
+                </p>
+                <div class="row g-3 mt-4">
+                    <div class="col-md-4">
+                        <div class="info-block">
+                            <div class="small text-secondary mb-2">Fokus</div>
+                            <div class="fw-semibold">UI konsisten</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-block">
+                            <div class="small text-secondary mb-2">Fitur</div>
+                            <div class="fw-semibold">CRUD + workflow</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-block">
+                            <div class="small text-secondary mb-2">Tujuan</div>
+                            <div class="fw-semibold">Pelaporan terstruktur</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

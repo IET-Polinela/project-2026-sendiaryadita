@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Laporan | KANADA CITY{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_detail' report.id %}">Detail</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<section class="row justify-content-center">
+    <div class="col-12 col-xl-9">
+        <div class="form-panel">
+            <div class="card-body p-4 p-md-5">
+                <span class="section-kicker mb-3">Update Report</span>
+                <h1 class="h2 fw-bold mb-2">Edit Laporan Masalah Kota</h1>
+                <p class="text-secondary mb-4">
+                    Perbarui data laporan <strong>{{ report.title }}</strong> jika ada informasi yang perlu diperbaiki.
+                </p>
+
+                <form method="post" class="report-form" data-loading-text="Loading...">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary" data-submit-button>
+                            <i class="bi bi-save me-2"></i>
+                            <span data-button-text>Simpan Perubahan</span>
+                        </button>
+                        <a class="btn btn-outline-secondary" href="{% url 'report_detail' report.id %}">
+                            <i class="bi bi-arrow-left me-2"></i>Kembali
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.report-form');
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener('submit', function () {
+            const submitButton = form.querySelector('[data-submit-button]');
+            const buttonText = form.querySelector('[data-button-text]');
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            if (buttonText) {
+                buttonText.textContent = form.dataset.loadingText || 'Loading...';
+            }
+        });
+    });
+</script>
+{% endblock %}

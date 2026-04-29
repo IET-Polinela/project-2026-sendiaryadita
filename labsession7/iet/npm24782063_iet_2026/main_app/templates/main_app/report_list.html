@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Laporan | KANADA CITY{% endblock %}
+
+{% block extra_head %}
+<style>
+    .report-toolbar {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 18px 46px rgba(8, 22, 29, 0.08);
+        padding: 1rem;
+    }
+
+    .search-control {
+        position: relative;
+    }
+
+    .search-control .bi-search {
+        color: var(--brand-muted);
+        left: 1rem;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .search-control .form-control {
+        padding-left: 2.75rem;
+    }
+
+    .report-result-meta {
+        color: var(--brand-muted);
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .modal-detail-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #reportDetailModal .modal-dialog {
+        max-width: 780px;
+    }
+
+    #reportDetailModal .modal-content {
+        border: 0;
+        border-radius: 26px;
+        box-shadow: 0 30px 90px rgba(8, 22, 29, 0.32);
+        overflow: hidden;
+    }
+
+    #reportDetailModal .modal-header {
+        background:
+            radial-gradient(circle at top right, rgba(242, 179, 93, 0.18), transparent 34%),
+            linear-gradient(135deg, rgba(15, 139, 141, 0.12), rgba(255, 255, 255, 0.98));
+        border-bottom: 1px solid rgba(15, 139, 141, 0.12);
+        padding: 1.35rem 1.5rem;
+    }
+
+    #reportDetailModal .modal-body {
+        padding: 1.5rem;
+    }
+
+    #reportDetailModal .modal-footer {
+        background: #f7fbfb;
+        border-top: 1px solid rgba(15, 139, 141, 0.12);
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-report-title {
+        color: var(--brand-ink);
+        font-size: 1.2rem;
+        line-height: 1.35;
+        max-width: 560px;
+    }
+
+    .modal-detail-item {
+        background: linear-gradient(180deg, #f8fcfc, #f2f8f8);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+    }
+
+    .modal-detail-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .modal-detail-label {
+        color: var(--brand-muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .modal-detail-value {
+        color: var(--brand-ink);
+        margin-top: 0.4rem;
+        overflow-wrap: anywhere;
+    }
+
+    .modal-description {
+        line-height: 1.6;
+    }
+
+    @media (max-width: 767.98px) {
+        .modal-detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Reports</li>
+    </ol>
+</nav>
+
+<section class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+        <span class="section-kicker mb-2">Reports</span>
+        <h1 class="h2 fw-bold mb-2">Daftar Laporan Masalah Kota</h1>
+        <p class="text-secondary mb-0">
+            Semua laporan ditampilkan dari yang terbaru agar lebih mudah dipantau dan ditindaklanjuti.
+        </p>
+    </div>
+    {% if user.is_authenticated and user.is_admin %}
+        <div>
+            <a class="btn btn-primary" href="{% url 'add_report' %}">
+                <i class="bi bi-plus-circle me-2"></i>Tambah Laporan
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="report-toolbar mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-12 col-lg-8">
+            <label class="visually-hidden" for="reportSearchInput">Cari laporan</label>
+            <div class="search-control">
+                <i class="bi bi-search"></i>
+                <input
+                    class="form-control"
+                    id="reportSearchInput"
+                    type="search"
+                    placeholder="Cari judul, kategori, lokasi, deskripsi, atau status"
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+        <div class="col-12 col-lg-4 text-lg-end">
+            <span class="report-result-meta" id="reportResultMeta">
+                Menampilkan {{ reports|length }} laporan
+            </span>
+        </div>
+    </div>
+</section>
+
+{% if reports %}
+    <div class="table-panel">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Judul</th>
+                            <th scope="col">Lokasi</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-nowrap">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        {% for report in reports %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ report.title }}</div>
+                                    <div class="small text-secondary">{{ report.category }}</div>
+                                </td>
+                                <td>{{ report.location }}</td>
+                                <td>
+                                    {% if report.status == 'REPORTED' %}
+                                        <span class="badge status-pill status-reported">Reported</span>
+                                    {% elif report.status == 'VERIFIED' %}
+                                        <span class="badge status-pill status-verified">Verified</span>
+                                    {% elif report.status == 'IN_PROGRESS' %}
+                                        <span class="badge status-pill status-progress">In Progress</span>
+                                    {% elif report.status == 'RESOLVED' %}
+                                        <span class="badge status-pill status-resolved">Resolved</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a
+                                            class="btn btn-sm btn-outline-primary js-report-detail"
+                                            href="{% url 'report_detail' report.id %}"
+                                            data-report-detail-url="{% url 'report_detail_json' report.id %}"
+                                            data-report-detail-page-url="{% url 'report_detail' report.id %}"
+                                        >
+                                            Detail
+                                        </a>
+                                        {% if user.is_authenticated and user.is_admin %}
+                                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'edit_report' report.id %}">
+                                                Edit
+                                            </a>
+                                            <a class="btn btn-sm btn-outline-danger" href="{% url 'delete_report' report.id %}">
+                                                Hapus
+                                            </a>
+
+                                            {% if report.status == 'REPORTED' %}
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'update_report_status' report.id %}"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Verified?');"
+                                                >
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="VERIFIED">
+                                                    <button class="btn btn-sm btn-primary" type="submit">
+                                                        Verified
+                                                    </button>
+                                                </form>
+                                            {% elif report.status == 'VERIFIED' %}
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'update_report_status' report.id %}"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi In Progress?');"
+                                                >
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="IN_PROGRESS">
+                                                    <button class="btn btn-sm btn-primary" type="submit">
+                                                        In Progress
+                                                    </button>
+                                                </form>
+                                            {% elif report.status == 'IN_PROGRESS' %}
+                                                <form
+                                                    method="post"
+                                                    action="{% url 'update_report_status' report.id %}"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Resolved?');"
+                                                >
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="RESOLVED">
+                                                    <button class="btn btn-sm btn-success" type="submit">
+                                                        Resolved
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="premium-panel">
+        <div class="card-body text-center py-5">
+            <div class="mb-3">
+                <span class="empty-icon">
+                    <i class="bi bi-inbox fs-1"></i>
+                </span>
+            </div>
+            <h2 class="h4 fw-semibold">Belum ada laporan</h2>
+            <p class="text-secondary mb-4">
+                {% if user.is_authenticated and user.is_admin %}
+                    Tambahkan laporan pertama agar data masalah kota mulai tercatat dalam sistem.
+                {% else %}
+                    Belum ada laporan yang dapat ditampilkan saat ini.
+                {% endif %}
+            </p>
+            {% if user.is_authenticated and user.is_admin %}
+                <a class="btn btn-primary" href="{% url 'add_report' %}">
+                    <i class="bi bi-plus-circle me-2"></i>Tambah laporan
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-labelledby="reportDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <span class="section-kicker mb-2">Report Detail</span>
+                    <h2 class="modal-title h5 fw-bold mb-1" id="reportDetailModalLabel">Detail Laporan</h2>
+                    <div class="small text-secondary" id="modalCreatedAt">Memuat data...</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+                    <h3 class="modal-report-title fw-bold mb-0" id="modalReportTitle">Memuat data...</h3>
+                    <span class="badge status-pill status-reported" id="modalStatusBadge">Reported</span>
+                </div>
+                <div class="modal-detail-grid">
+                    <div class="modal-detail-item">
+                        <div class="modal-detail-label">Kategori</div>
+                        <div class="modal-detail-value fw-semibold" id="modalCategory">-</div>
+                    </div>
+                    <div class="modal-detail-item">
+                        <div class="modal-detail-label">Lokasi</div>
+                        <div class="modal-detail-value fw-semibold" id="modalLocation">-</div>
+                    </div>
+                    <div class="modal-detail-item full">
+                        <div class="modal-detail-label">Deskripsi</div>
+                        <div class="modal-detail-value modal-description" id="modalDescription">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-primary" id="modalFullDetailLink" href="#">
+                    <i class="bi bi-box-arrow-up-right me-2"></i>Buka Halaman Detail
+                </a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('reportSearchInput');
+        const reportResultMeta = document.getElementById('reportResultMeta');
+        const reportsTableBody = document.getElementById('reportsTableBody');
+        const detailModalElement = document.getElementById('reportDetailModal');
+        const searchUrl = "{% url 'report_search' %}";
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value || "{{ csrf_token }}";
+        const canManageReports = {% if user.is_authenticated and user.is_admin %}true{% else %}false{% endif %};
+        const statusClassMap = {
+            REPORTED: 'status-reported',
+            VERIFIED: 'status-verified',
+            IN_PROGRESS: 'status-progress',
+            RESOLVED: 'status-resolved',
+        };
+        let searchTimer;
+
+        if (detailModalElement && detailModalElement.parentElement !== document.body) {
+            document.body.appendChild(detailModalElement);
+        }
+
+        if (searchInput && reportsTableBody) {
+            searchInput.addEventListener('input', () => {
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(() => {
+                    fetchReports(searchInput.value.trim());
+                }, 300);
+            });
+
+            reportsTableBody.addEventListener('click', (event) => {
+                const detailTrigger = event.target.closest('.js-report-detail');
+
+                if (!detailTrigger || !detailTrigger.dataset.reportDetailUrl) {
+                    return;
+                }
+
+                if (!detailModalElement || !window.bootstrap || !window.bootstrap.Modal) {
+                    return;
+                }
+
+                event.preventDefault();
+                openReportDetail(
+                    detailTrigger.dataset.reportDetailUrl,
+                    detailTrigger.dataset.reportDetailPageUrl || detailTrigger.href
+                );
+            });
+        }
+
+        function fetchReports(query) {
+            const url = new URL(searchUrl, window.location.origin);
+            url.searchParams.set('q', query);
+
+            fetch(url)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengambil data laporan.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('Live Search JSON:', data);
+                    renderReports(data.reports);
+                    reportResultMeta.textContent = `Menampilkan ${data.count} laporan`;
+                })
+                .catch((error) => {
+                    console.error(error);
+                    reportsTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary py-4">Data laporan belum bisa dimuat.</td></tr>';
+                });
+        }
+
+        function renderReports(reports) {
+            reportsTableBody.replaceChildren();
+
+            if (!reports.length) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 4;
+                cell.className = 'text-center text-secondary py-4';
+                cell.textContent = 'Tidak ada laporan yang cocok.';
+                row.appendChild(cell);
+                reportsTableBody.appendChild(row);
+                return;
+            }
+
+            reports.forEach((report) => {
+                reportsTableBody.appendChild(createReportRow(report));
+            });
+        }
+
+        function createReportRow(report) {
+            const row = document.createElement('tr');
+            const titleCell = document.createElement('td');
+            const locationCell = document.createElement('td');
+            const statusCell = document.createElement('td');
+            const actionCell = document.createElement('td');
+            const title = document.createElement('div');
+            const category = document.createElement('div');
+            const statusBadge = createStatusBadge(report);
+            const actions = document.createElement('div');
+            const detailButton = document.createElement('a');
+
+            title.className = 'fw-semibold';
+            title.textContent = report.title;
+            category.className = 'small text-secondary';
+            category.textContent = report.category;
+            titleCell.append(title, category);
+
+            locationCell.textContent = report.location;
+            statusCell.appendChild(statusBadge);
+
+            actions.className = 'd-flex flex-wrap gap-2';
+            detailButton.className = 'btn btn-sm btn-outline-primary js-report-detail';
+            detailButton.href = report.detail_url;
+            detailButton.dataset.reportDetailUrl = report.detail_json_url;
+            detailButton.dataset.reportDetailPageUrl = report.detail_url;
+            detailButton.textContent = 'Detail';
+            actions.appendChild(detailButton);
+
+            if (canManageReports) {
+                actions.append(
+                    createActionLink(report.edit_url, 'Edit', 'btn-outline-secondary'),
+                    createActionLink(report.delete_url, 'Hapus', 'btn-outline-danger')
+                );
+
+                const statusForm = createStatusForm(report);
+                if (statusForm) {
+                    actions.appendChild(statusForm);
+                }
+            }
+
+            actionCell.appendChild(actions);
+            row.append(titleCell, locationCell, statusCell, actionCell);
+
+            return row;
+        }
+
+        function createActionLink(url, text, buttonClass) {
+            const link = document.createElement('a');
+            link.className = `btn btn-sm ${buttonClass}`;
+            link.href = url;
+            link.textContent = text;
+
+            return link;
+        }
+
+        function createStatusForm(report) {
+            if (!report.next_status) {
+                return null;
+            }
+
+            const form = document.createElement('form');
+            const csrfInput = document.createElement('input');
+            const statusInput = document.createElement('input');
+            const button = document.createElement('button');
+
+            form.method = 'post';
+            form.action = report.update_status_url;
+            form.onsubmit = () => confirm(`Ubah status laporan ini menjadi ${report.next_status_label}?`);
+
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+
+            statusInput.type = 'hidden';
+            statusInput.name = 'status';
+            statusInput.value = report.next_status;
+
+            button.className = report.next_status === 'RESOLVED' ? 'btn btn-sm btn-success' : 'btn btn-sm btn-primary';
+            button.type = 'submit';
+            button.textContent = report.next_status_label;
+
+            form.append(csrfInput, statusInput, button);
+
+            return form;
+        }
+
+        function openReportDetail(detailUrl, fallbackUrl) {
+            setModalLoadingState(fallbackUrl);
+            window.bootstrap.Modal.getOrCreateInstance(detailModalElement).show();
+
+            fetch(detailUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Gagal mengambil detail laporan.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('Detail Modal JSON:', data);
+                    renderModalDetail(data.report);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    document.getElementById('modalReportTitle').textContent = 'Detail belum bisa dimuat';
+                    document.getElementById('modalDescription').textContent = 'Silakan coba lagi.';
+                    document.getElementById('modalFullDetailLink').href = fallbackUrl;
+                });
+        }
+
+        function setModalLoadingState(fallbackUrl) {
+            document.getElementById('modalReportTitle').textContent = 'Memuat data...';
+            document.getElementById('modalCreatedAt').textContent = 'Memuat data...';
+            document.getElementById('modalCategory').textContent = '-';
+            document.getElementById('modalLocation').textContent = '-';
+            document.getElementById('modalDescription').textContent = '-';
+            document.getElementById('modalFullDetailLink').href = fallbackUrl;
+
+            const badge = document.getElementById('modalStatusBadge');
+            badge.className = 'badge status-pill status-reported';
+            badge.textContent = 'Reported';
+        }
+
+        function renderModalDetail(report) {
+            document.getElementById('modalReportTitle').textContent = report.title;
+            document.getElementById('modalCreatedAt').textContent = `Dibuat pada ${report.created_at}`;
+            document.getElementById('modalCategory').textContent = report.category;
+            document.getElementById('modalLocation').textContent = report.location;
+            document.getElementById('modalDescription').textContent = report.description;
+            document.getElementById('modalFullDetailLink').href = report.detail_url;
+
+            const badge = document.getElementById('modalStatusBadge');
+            badge.className = `badge status-pill ${statusClassMap[report.status] || 'status-reported'}`;
+            badge.textContent = report.status_label;
+        }
+
+        function createStatusBadge(report) {
+            const badge = document.createElement('span');
+            badge.className = `badge status-pill ${statusClassMap[report.status] || 'status-reported'}`;
+            badge.textContent = report.status_label;
+
+            return badge;
+        }
+    });
+</script>
+{% endblock %}
