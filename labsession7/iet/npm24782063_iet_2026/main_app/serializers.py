@@ -10,12 +10,12 @@ class ReportSerializer(serializers.ModelSerializer):
         model = Report
         fields = [
             'id',
-            'reporter',
             'title',
             'category',
             'description',
             'location',
             'status',
+            'reporter',
             'created_at',
             'updated_at',
         ]
@@ -31,13 +31,44 @@ class ReportSerializer(serializers.ModelSerializer):
 
     def validate_status(self, value):
         request = self.context.get('request')
+        user = request.user if request else None
 
-        if request and request.user.is_authenticated:
-            is_admin = request.user.is_staff or getattr(request.user, 'is_admin', False)
+        is_admin = bool(
+            user
+            and user.is_authenticated
+            and (
+                user.is_superuser
+                or user.is_staff
+                or getattr(user, 'is_admin', False)
+            )
+        )
 
-            if not is_admin and value != 'DRAFT':
-                raise serializers.ValidationError(
-                    'Citizen tidak boleh mengubah status selain DRAFT.'
-                )
+        if user and user.is_authenticated and not is_admin and value != 'DRAFT':
+            raise serializers.ValidationError(
+                'Citizen hanya boleh membuat atau mengubah report dengan status DRAFT.'
+            )
 
         return value
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = request.user if request else None
+
+        is_admin = bool(
+            user
+            and user.is_authenticated
+            and (
+                user.is_superuser
+                or user.is_staff
+                or getattr(user, 'is_admin', False)
+            )
+        )
+
+        if request and is_admin and request.method in ['PUT', 'PATCH']:
+            allowed_fields = {'status'}
+            if not set(attrs.keys()).issubset(allowed_fields):
+                raise serializers.ValidationError(
+                    'Admin hanya boleh mengubah status report.'
+                )
+
+        return attrs
