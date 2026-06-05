@@ -2,11 +2,14 @@ const routes = {
     "#login": `
         <div class="row justify-content-center mt-5">
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="card shadow-sm border-0">
+                <div class="card login-card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <h4 class="text-center mb-4">
-                            <i class="bi bi-person-circle me-2"></i>Login Warga
-                        </h4>
+                        <div class="text-center mb-4">
+                            <span class="login-icon mb-3">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </span>
+                            <h4 class="fw-bold mb-1">Login Warga</h4>
+                        </div>
 
                         <form id="loginForm">
                             <div class="mb-3">
@@ -30,46 +33,61 @@ const routes = {
     `,
 
     "#dashboard": `
-        <div class="row g-4">
-            <aside class="col-12 col-lg-3">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+        <div class="row g-4 dashboard-shell">
+            <aside class="col-12 col-lg-2">
+                <div class="card sidebar-card shadow-sm border-0 sticky-top" style="top: 20px;">
                     <div class="card-body">
-                        <button class="btn btn-primary w-100 fw-bold mb-3">
-                            <i class="bi bi-plus-circle-fill me-2"></i>Laporan Baru
+                        <button type="button" class="btn btn-primary new-report-button w-100 fw-bold mb-4 d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#reportModal">
+                            <i class="bi bi-plus-circle-fill me-2"></i>Buat Laporan Baru
                         </button>
 
-                        <hr>
+                        <h6 class="sidebar-heading fw-bold text-uppercase small mb-3">
+                            <i class="bi bi-activity me-1"></i>Status Laporan Anda
+                        </h6>
 
-                        <p class="text-muted mb-0">
-                            <i class="bi bi-person-check-fill me-2"></i>Portal Warga
-                        </p>
+                        <div class="status-row d-flex justify-content-between align-items-center border-bottom py-2">
+                            <span><i class="bi bi-pencil-square text-secondary me-2"></i>Draf</span>
+                            <span class="badge rounded-pill status-count-draft" id="countDraft">0</span>
+                        </div>
+
+                        <div class="status-row d-flex justify-content-between align-items-center border-bottom py-2">
+                            <span><i class="bi bi-send-fill text-warning me-2"></i>Diajukan</span>
+                            <span class="badge rounded-pill status-count-reported" id="countReported">0</span>
+                        </div>
+
+                        <div class="status-row d-flex justify-content-between align-items-center border-bottom py-2">
+                            <span><i class="bi bi-patch-check-fill me-2" style="color: #18b7cf;"></i>Diverifikasi</span>
+                            <span class="badge rounded-pill status-count-verified" id="countVerified">0</span>
+                        </div>
+
+                        <div class="status-row d-flex justify-content-between align-items-center border-bottom py-2">
+                            <span><i class="bi bi-gear-fill me-2" style="color: #fd7e14;"></i>Diproses</span>
+                            <span class="badge rounded-pill status-count-process" id="countProcess">0</span>
+                        </div>
+
+                        <div class="status-row d-flex justify-content-between align-items-center py-2">
+                            <span><i class="bi bi-check-circle-fill text-success me-2"></i>Selesai</span>
+                            <span class="badge rounded-pill status-count-done" id="countDone">0</span>
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            <section class="col-12 col-lg-6">
+            <section class="col-12 col-lg-10">
                 <div class="mb-3">
-                    <h5 class="fw-bold">
-                        <i class="bi bi-list-check me-2"></i>Daftar Laporan Warga
-                    </h5>
-                    <p class="text-muted small mb-0">Data laporan diambil langsung dari backend Django REST API.</p>
+                    <div class="nav nav-tabs dashboard-tabs" id="dashboardTabs">
+                        <button type="button" id="tabMyReports" class="nav-link active fw-bold" onclick="loadDashboardData('my_reports', 1)">
+                            <i class="bi bi-folder-fill me-2"></i>Laporan Saya
+                        </button>
+
+                        <button type="button" id="tabFeed" class="nav-link fw-bold" onclick="loadDashboardData('feed', 1)">
+                            <i class="bi bi-globe-americas me-2"></i>Feed Kota (Publik)
+                        </button>
+                    </div>
                 </div>
 
                 <div id="reports-list"></div>
             </section>
-
-            <aside class="col-12 col-lg-3">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                    <div class="card-body">
-                        <h6 class="fw-bold">
-                            <i class="bi bi-info-circle-fill text-primary me-2"></i>Pengumuman
-                        </h6>
-                        <p class="small text-muted mb-0">
-                            Gunakan portal ini untuk membuat dan memantau laporan warga.
-                        </p>
-                    </div>
-                </div>
-            </aside>
         </div>
     `
 };

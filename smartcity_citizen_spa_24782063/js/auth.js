@@ -23,10 +23,10 @@ function updateNavMenus() {
                 <i class="bi bi-speedometer2 me-1"></i>Dashboard
             </a>
             <span class="user-chip">
-                <i class="bi bi-person-circle me-2"></i>${escapeHTML(username)}
+                <i class="bi bi-person-circle me-2"></i>Halo, ${escapeHTML(username)}!
             </span>
             <button class="nav-link-button" type="button" onclick="logout()">
-                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                <i class="bi bi-box-arrow-right me-1"></i>Keluar
             </button>
         `;
         return;
