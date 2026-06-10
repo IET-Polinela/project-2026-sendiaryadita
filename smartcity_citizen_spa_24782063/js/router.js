@@ -26,6 +26,73 @@ const routes = {
                                 Masuk
                             </button>
                         </form>
+
+                        <p class="text-center text-muted small mt-4 mb-0">
+                            Belum punya akun?
+                            <a href="#register" class="fw-bold text-decoration-none">Daftar sekarang</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+
+    "#register": `
+        <div class="row justify-content-center mt-4 mb-5">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card login-card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <span class="login-icon mb-3">
+                                <i class="bi bi-person-plus-fill fs-4"></i>
+                            </span>
+                            <h4 class="fw-bold mb-1">Daftar Akun Warga</h4>
+                        </div>
+
+                        <div id="registerMessage"></div>
+
+                        <form id="registerForm">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="registerFirstName" class="form-label">Nama Depan</label>
+                                    <input type="text" id="registerFirstName" class="form-control" autocomplete="given-name">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="registerLastName" class="form-label">Nama Belakang</label>
+                                    <input type="text" id="registerLastName" class="form-control" autocomplete="family-name">
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="registerUsername" class="form-label">Username</label>
+                                    <input type="text" id="registerUsername" class="form-control" autocomplete="username" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="registerEmail" class="form-label">Email</label>
+                                    <input type="email" id="registerEmail" class="form-control" autocomplete="email">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <input type="password" id="registerPassword" class="form-control" minlength="6" autocomplete="new-password" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="registerPassword2" class="form-label">Konfirmasi Password</label>
+                                    <input type="password" id="registerPassword2" class="form-control" minlength="6" autocomplete="new-password" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="registerButton" class="btn btn-primary w-100 fw-bold mt-4">
+                                <i class="bi bi-person-check-fill me-2"></i>Daftar
+                            </button>
+                        </form>
+
+                        <p class="text-center text-muted small mt-4 mb-0">
+                            Sudah punya akun?
+                            <a href="#login" class="fw-bold text-decoration-none">Masuk di sini</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -102,6 +169,10 @@ function handleRouting() {
 
     if (hash === "#login" && typeof setupLoginForm === "function") {
         setupLoginForm();
+    }
+
+    if (hash === "#register" && typeof setupRegisterForm === "function") {
+        setupRegisterForm();
     }
 
     if (hash === "#dashboard" && typeof loadReports === "function") {
