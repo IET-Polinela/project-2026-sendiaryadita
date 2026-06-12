@@ -18,6 +18,18 @@ function getReportStatusClass(status) {
     return statusClassMap[status] || "status-draft";
 }
 
+function getReportStatusLabel(status) {
+    const statusLabelMap = {
+        DRAFT: "Draf",
+        REPORTED: "Diajukan",
+        VERIFIED: "Diverifikasi",
+        IN_PROGRESS: "Diproses",
+        RESOLVED: "Selesai",
+    };
+
+    return statusLabelMap[status] || "Belum diketahui";
+}
+
 function getProgressInfo(status) {
     if (status === "DRAFT") {
         return { value: 10, className: "progress-draft", label: "Draf" };
@@ -141,9 +153,9 @@ function renderList(reports, tab) {
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center text-muted py-5">
-                        <i class="bi bi-inbox fs-1"></i>
-                        <h5 class="mt-3">Belum Ada Laporan</h5>
-                        <p class="small mb-0">Belum ada laporan di tab ini.</p>
+                        <i class="bi bi-inbox fs-1 text-primary"></i>
+                        <h5 class="mt-3 fw-bold">Belum ada laporan</h5>
+                        <p class="small mb-0">Data laporan untuk bagian ini belum tersedia.</p>
                     </div>
                 </div>
             </div>
@@ -159,6 +171,7 @@ function renderList(reports, tab) {
         const category = report.category || "Tanpa Kategori";
         const reporter = report.reporter || "Warga Anonim";
         const progress = getProgressInfo(status);
+        const statusLabel = getReportStatusLabel(status);
         const canEditDraft = status === "DRAFT" && report.is_owner === true;
         const editButton = canEditDraft ? `
             <div class="mt-3 d-flex justify-content-end">
@@ -174,9 +187,11 @@ function renderList(reports, tab) {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                             <span class="status-pill ${getReportStatusClass(status)}">
-                                ${escapeHTML(status)}
+                                ${escapeHTML(statusLabel)}
                             </span>
-                            <span class="small text-muted text-end">${escapeHTML(category)}</span>
+                            <span class="small text-muted text-end">
+                                <i class="bi bi-tag me-1"></i>${escapeHTML(category)}
+                            </span>
                         </div>
 
                         <h5 class="report-title fw-bold mb-2">

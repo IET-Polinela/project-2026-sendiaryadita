@@ -19,13 +19,13 @@ function updateNavMenus() {
 
     if (accessToken) {
         navMenus.innerHTML = `
-            <a class="app-nav-link" href="#dashboard">
+            <a class="app-nav-link" href="#dashboard" title="Dashboard" aria-label="Dashboard">
                 <i class="bi bi-speedometer2 me-1"></i>Dashboard
             </a>
-            <span class="user-chip">
+            <span class="user-chip" title="Akun ${escapeHTML(username)}" aria-label="Akun ${escapeHTML(username)}">
                 <i class="bi bi-person-circle me-2"></i>Halo, ${escapeHTML(username)}!
             </span>
-            <button class="nav-link-button" type="button" onclick="logout()">
+            <button class="nav-link-button" type="button" onclick="logout()" title="Keluar" aria-label="Keluar">
                 <i class="bi bi-box-arrow-right me-1"></i>Keluar
             </button>
         `;
@@ -33,10 +33,10 @@ function updateNavMenus() {
     }
 
     navMenus.innerHTML = `
-        <a class="app-nav-link" href="#login">
+        <a class="app-nav-link" href="#login" title="Login" aria-label="Login">
             <i class="bi bi-box-arrow-in-right me-1"></i>Login
         </a>
-        <a class="app-nav-link" href="#register">
+        <a class="app-nav-link" href="#register" title="Daftar" aria-label="Daftar">
             <i class="bi bi-person-plus me-1"></i>Daftar
         </a>
     `;
