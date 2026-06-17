@@ -29,7 +29,7 @@ class ReportSerializer(serializers.ModelSerializer):
             'updated_at',
         ]
 
-    def get_reporter(self, obj):
+    def get_reporter(self, obj) -> str:
         request = self.context.get('request')
 
         if request and request.user.is_authenticated and obj.reporter == request.user:
@@ -37,7 +37,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
         return 'Warga Anonim'
 
-    def get_is_owner(self, obj):
+    def get_is_owner(self, obj) -> bool:
         request = self.context.get('request')
 
         if not request or not request.user.is_authenticated:
