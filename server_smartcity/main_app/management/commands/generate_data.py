@@ -7,7 +7,7 @@ from main_app.models import Report
 
 
 class Command(BaseCommand):
-    help = 'Generate contextual fake reports for KANADA CITY'
+    help = 'Generate contextual fake reports for Lampung Tanggap'
 
     def add_arguments(self, parser):
         parser.add_argument('num_records', type=int, help='Jumlah data')

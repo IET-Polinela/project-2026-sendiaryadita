@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Daftar Laporan | KANADA CITY{% endblock %}
+{% block title %}Daftar Laporan | Lampung Tanggap{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -117,14 +117,14 @@
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Reports</li>
+        <li class="breadcrumb-item active" aria-current="page">Laporan</li>
     </ol>
 </nav>
 
 <section class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
     <div>
-        <span class="section-kicker mb-2">Reports</span>
-        <h1 class="h2 fw-bold mb-2">Daftar Laporan Masalah Kota</h1>
+        <span class="section-kicker mb-2">Laporan</span>
+        <h1 class="h2 fw-bold mb-2">Daftar Laporan Warga Lampung</h1>
         <p class="text-secondary mb-0">
             Semua laporan ditampilkan dari yang terbaru agar lebih mudah dipantau dan ditindaklanjuti.
         </p>
@@ -184,13 +184,13 @@
                                 <td>{{ report.location }}</td>
                                 <td>
                                     {% if report.status == 'REPORTED' %}
-                                        <span class="badge status-pill status-reported">Reported</span>
+                                        <span class="badge status-pill status-reported">Diajukan</span>
                                     {% elif report.status == 'VERIFIED' %}
-                                        <span class="badge status-pill status-verified">Verified</span>
+                                        <span class="badge status-pill status-verified">Diverifikasi</span>
                                     {% elif report.status == 'IN_PROGRESS' %}
-                                        <span class="badge status-pill status-progress">In Progress</span>
+                                        <span class="badge status-pill status-progress">Diproses</span>
                                     {% elif report.status == 'RESOLVED' %}
-                                        <span class="badge status-pill status-resolved">Resolved</span>
+                                        <span class="badge status-pill status-resolved">Selesai</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -215,36 +215,36 @@
                                                 <form
                                                     method="post"
                                                     action="{% url 'update_report_status' report.id %}"
-                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Verified?');"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Diverifikasi?');"
                                                 >
                                                     {% csrf_token %}
                                                     <input type="hidden" name="status" value="VERIFIED">
                                                     <button class="btn btn-sm btn-primary" type="submit">
-                                                        Verified
+                                                        Diverifikasi
                                                     </button>
                                                 </form>
                                             {% elif report.status == 'VERIFIED' %}
                                                 <form
                                                     method="post"
                                                     action="{% url 'update_report_status' report.id %}"
-                                                    onsubmit="return confirm('Ubah status laporan ini menjadi In Progress?');"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Diproses?');"
                                                 >
                                                     {% csrf_token %}
                                                     <input type="hidden" name="status" value="IN_PROGRESS">
                                                     <button class="btn btn-sm btn-primary" type="submit">
-                                                        In Progress
+                                                        Diproses
                                                     </button>
                                                 </form>
                                             {% elif report.status == 'IN_PROGRESS' %}
                                                 <form
                                                     method="post"
                                                     action="{% url 'update_report_status' report.id %}"
-                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Resolved?');"
+                                                    onsubmit="return confirm('Ubah status laporan ini menjadi Selesai?');"
                                                 >
                                                     {% csrf_token %}
                                                     <input type="hidden" name="status" value="RESOLVED">
                                                     <button class="btn btn-sm btn-success" type="submit">
-                                                        Resolved
+                                                        Selesai
                                                     </button>
                                                 </form>
                                             {% endif %}
@@ -269,7 +269,7 @@
             <h2 class="h4 fw-semibold">Belum ada laporan</h2>
             <p class="text-secondary mb-4">
                 {% if user.is_authenticated and user.is_admin %}
-                    Tambahkan laporan pertama agar data masalah kota mulai tercatat dalam sistem.
+                    Tambahkan laporan pertama agar data aspirasi warga mulai tercatat dalam sistem.
                 {% else %}
                     Belum ada laporan yang dapat ditampilkan saat ini.
                 {% endif %}
@@ -288,7 +288,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <span class="section-kicker mb-2">Report Detail</span>
+                    <span class="section-kicker mb-2">Detail Laporan</span>
                     <h2 class="modal-title h5 fw-bold mb-1" id="reportDetailModalLabel">Detail Laporan</h2>
                     <div class="small text-secondary" id="modalCreatedAt">Memuat data...</div>
                 </div>
@@ -297,7 +297,7 @@
             <div class="modal-body">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
                     <h3 class="modal-report-title fw-bold mb-0" id="modalReportTitle">Memuat data...</h3>
-                    <span class="badge status-pill status-reported" id="modalStatusBadge">Reported</span>
+                    <span class="badge status-pill status-reported" id="modalStatusBadge">Diajukan</span>
                 </div>
                 <div class="modal-detail-grid">
                     <div class="modal-detail-item">
@@ -535,7 +535,7 @@
 
             const badge = document.getElementById('modalStatusBadge');
             badge.className = 'badge status-pill status-reported';
-            badge.textContent = 'Reported';
+            badge.textContent = 'Diajukan';
         }
 
         function renderModalDetail(report) {

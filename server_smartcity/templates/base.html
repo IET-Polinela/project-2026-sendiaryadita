@@ -1,12 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}KANADA CITY{% endblock %}</title>
+    <title>{% block title %}Lampung Tanggap{% endblock %}</title>
+    <meta name="theme-color" content="#102c2a">
     <script>
         (function () {
-            const savedTheme = localStorage.getItem('kanada-theme');
+            const savedTheme = localStorage.getItem('lampung-theme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
@@ -30,31 +32,32 @@
 
     <style>
         :root {
-            --bg-top: #0b1512;
-            --bg-mid: #e7f2ec;
-            --bg-bottom: #f6faf7;
-            --brand-primary: #087f5b;
-            --brand-primary-dark: #064d39;
-            --brand-accent: #d99a32;
-            --brand-ink: #10231f;
-            --brand-muted: #65756f;
+            --lampung-panorama: url("{% static 'main_app/img/lampung-panorama.webp' %}");
+            --bg-top: #102c2a;
+            --bg-mid: #edf3f1;
+            --bg-bottom: #f3f6f5;
+            --brand-primary: #0b6b5b;
+            --brand-primary-dark: #103c37;
+            --brand-accent: #d7a638;
+            --brand-ink: #172522;
+            --brand-muted: #687a75;
             --surface: rgba(255, 255, 255, 0.96);
             --surface-strong: #ffffff;
-            --surface-soft: #f4f8f6;
-            --surface-muted: #edf4f0;
-            --border-soft: rgba(16, 35, 31, 0.11);
+            --surface-soft: #edf3f1;
+            --surface-muted: #e5eeeb;
+            --border-soft: rgba(23, 37, 34, 0.12);
             --shadow-soft: 0 20px 56px rgba(7, 20, 17, 0.12);
             --shadow-deep: 0 28px 84px rgba(7, 20, 17, 0.24);
             --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
-            --nav-bg: rgba(8, 19, 16, 0.92);
+            --nav-bg: rgba(16, 44, 42, 0.96);
             --nav-border: rgba(255, 255, 255, 0.1);
             --field-bg: rgba(255, 255, 255, 0.98);
             --table-line: rgba(16, 35, 31, 0.08);
-            --hero-start: #0b1512;
-            --hero-mid: #123a30;
-            --hero-end: #087f5b;
+            --hero-start: #102c2a;
+            --hero-mid: #0f4e43;
+            --hero-end: #0b6b5b;
             --modal-bg: #ffffff;
         }
 
@@ -93,9 +96,13 @@
             color: var(--brand-ink);
             font-family: "Manrope", "Segoe UI", sans-serif;
             background:
-                linear-gradient(180deg, rgba(6, 16, 13, 0.94) 0%, rgba(6, 16, 13, 0.86) 17rem, transparent 17rem),
+                linear-gradient(180deg, rgba(6, 16, 13, 0.96) 0%, rgba(6, 16, 13, 0.86) 17rem, transparent 17rem),
+                linear-gradient(135deg, rgba(237, 243, 241, 0.82), rgba(243, 246, 245, 0.9)),
+                var(--lampung-panorama),
                 linear-gradient(135deg, var(--bg-mid) 0%, var(--bg-bottom) 100%);
             background-attachment: fixed;
+            background-position: top center, center, center top, center;
+            background-size: auto, auto, cover, auto;
             min-height: 100vh;
         }
 
@@ -126,15 +133,15 @@
 
         .brand-mark {
             align-items: center;
-            background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
-            border-radius: 14px;
-            color: #ffffff;
+            background: var(--brand-accent);
+            border-radius: 8px;
+            color: #17322e;
             display: inline-flex;
             font-size: 1rem;
             height: 42px;
             justify-content: center;
             width: 42px;
-            box-shadow: 0 14px 26px rgba(8, 127, 91, 0.22);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
         }
 
         .brand-title {
@@ -157,7 +164,7 @@
         .navbar .nav-link {
             color: rgba(255, 255, 255, 0.82);
             padding: 0.7rem 1rem;
-            border-radius: 999px;
+            border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s ease;
         }
@@ -183,7 +190,7 @@
             background: transparent;
             color: rgba(255, 255, 255, 0.82);
             padding: 0.7rem 1rem;
-            border-radius: 999px;
+            border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s ease;
         }
@@ -198,19 +205,20 @@
             display: inline-flex;
             align-items: center;
             padding: 0.7rem 1rem;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.86);
+            border-radius: 8px;
+            background: var(--brand-accent);
+            color: #17322e;
             font-weight: 700;
         }
 
         .page-shell {
             min-height: calc(100vh - 74px);
-            padding: 2.4rem 0 3rem;
+            padding: clamp(1.5rem, 2vw, 2.5rem) 0 3rem;
         }
 
         .page-wrap {
-            width: min(1320px, calc(100% - 2rem));
+            width: calc(100% - clamp(1rem, 2.5vw, 3rem));
+            max-width: none;
             margin: 0 auto;
         }
 
@@ -219,9 +227,21 @@
                 linear-gradient(180deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--surface-soft) 88%, transparent));
             border: 1px solid var(--border-soft);
             border-radius: var(--radius-xl);
-            padding: 1.4rem;
+            min-height: calc(100vh - 170px);
+            padding: clamp(1rem, 2vw, 2rem);
             box-shadow: var(--shadow-soft);
             backdrop-filter: blur(12px);
+            animation: surfaceReveal 0.5s ease both;
+        }
+
+        .page-frame > .row.justify-content-center {
+            justify-content: stretch !important;
+        }
+
+        .page-frame > .row.justify-content-center > [class*="col-"] {
+            flex: 0 0 100%;
+            max-width: 100%;
+            width: 100%;
         }
 
         .message-stack .alert {
@@ -272,6 +292,15 @@
             border: 1px solid var(--border-soft);
             border-radius: var(--radius-xl);
             box-shadow: var(--shadow-soft);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .premium-panel:hover,
+        .form-panel:hover,
+        .spotlight-panel:hover {
+            border-color: rgba(11, 107, 91, 0.22);
+            box-shadow: 0 24px 70px rgba(7, 20, 17, 0.16);
+            transform: translateY(-2px);
         }
 
         .spotlight-panel {
@@ -284,21 +313,33 @@
             overflow: hidden;
             border-radius: 34px;
             background:
-                linear-gradient(135deg, var(--hero-start) 0%, var(--hero-mid) 52%, var(--hero-end) 100%);
+                linear-gradient(90deg, rgba(16, 44, 42, 0.94) 0%, rgba(15, 78, 67, 0.74) 47%, rgba(11, 107, 91, 0.12) 100%),
+                var(--lampung-panorama);
+            background-position: center;
+            background-size: cover;
             color: #ffffff;
             box-shadow: var(--shadow-deep);
+            min-height: 430px;
         }
 
         .hero-premium::after {
             content: "";
             position: absolute;
-            inset: auto 0 0 auto;
-            width: 44%;
+            inset: 0;
+            width: 100%;
             height: 100%;
             background:
-                linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.06)),
-                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0 1px, transparent 1px 12px);
-            opacity: 0.65;
+                linear-gradient(115deg, transparent 0 33%, rgba(255, 255, 255, 0.16) 43%, transparent 53%),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 14px);
+            opacity: 0.48;
+            pointer-events: none;
+            transform: translateX(-20%);
+            animation: heroSheen 8s ease-in-out infinite;
+        }
+
+        .hero-premium .card-body {
+            position: relative;
+            z-index: 1;
         }
 
         .hero-premium .lead,
@@ -307,10 +348,62 @@
         }
 
         .hero-aside {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 28px;
             backdrop-filter: blur(8px);
+        }
+
+        .hero-photo-card {
+            min-height: 230px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 28px;
+            background:
+                linear-gradient(180deg, rgba(16, 44, 42, 0.05) 0%, rgba(16, 44, 42, 0.62) 100%),
+                var(--lampung-panorama);
+            background-position: center;
+            background-size: cover;
+            box-shadow: 0 24px 52px rgba(4, 18, 15, 0.28);
+        }
+
+        .hero-photo-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.02);
+        }
+
+        .hero-photo-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(115deg, transparent 0 35%, rgba(255, 255, 255, 0.22) 45%, transparent 55%),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px 15px);
+            opacity: 0.44;
+            pointer-events: none;
+            animation: heroSheen 8s ease-in-out infinite;
+        }
+
+        .hero-photo-badge {
+            position: absolute;
+            left: 1rem;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #17322e;
+            font-weight: 800;
+            box-shadow: 0 12px 30px rgba(7, 20, 17, 0.22);
         }
 
         .mini-card {
@@ -439,6 +532,12 @@
             font-weight: 700;
             padding: 0.78rem 1.1rem;
             border-width: 1px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            transform: translateY(-1px);
         }
 
         .btn-sm {
@@ -582,6 +681,40 @@
             border-radius: 50%;
         }
 
+        @keyframes surfaceReveal {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heroSheen {
+            0%,
+            72% {
+                transform: translateX(-28%);
+            }
+
+            100% {
+                transform: translateX(28%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         .empty-icon {
             width: 92px;
             height: 92px;
@@ -595,8 +728,8 @@
         }
 
         @media (max-width: 991.98px) {
-                .page-wrap {
-                width: min(100% - 1rem, 100%);
+            .page-wrap {
+                width: calc(100% - 1rem);
             }
 
             .page-frame {
@@ -634,10 +767,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
         <div class="container-fluid px-3 px-lg-4 px-xl-5">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <span class="brand-mark"><i class="bi bi-buildings"></i></span>
+                <span class="brand-mark"><i class="bi bi-megaphone-fill"></i></span>
                 <span>
-                    <span class="brand-title">KANADA CITY</span>
-                    <span class="brand-subtitle">Public Report System</span>
+                    <span class="brand-title">Lampung Tanggap</span>
+                    <span class="brand-subtitle">Portal Aspirasi Warga</span>
                 </span>
             </a>
             <button
@@ -661,13 +794,13 @@
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'report_list' %}">Reports</a>
+                        <a class="nav-link" href="{% url 'report_list' %}">Laporan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                        <a class="nav-link" href="{% url 'about' %}">Tentang</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contacts' %}">Contact</a>
+                        <a class="nav-link" href="{% url 'contacts' %}">Kontak</a>
                     </li>
                 </ul>
                 <div class="navbar-actions ms-lg-3 mt-3 mt-lg-0">
@@ -682,12 +815,12 @@
                         <form method="post" action="{% url 'logout' %}">
                             {% csrf_token %}
                             <button class="nav-link nav-link-button" type="submit">
-                                Logout
+                                Keluar
                             </button>
                         </form>
                 {% else %}
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        <a class="nav-link" href="{% url 'login' %}">Masuk</a>
+                        <a class="nav-link" href="{% url 'register' %}">Daftar</a>
                 {% endif %}
                 </div>
             </div>
@@ -731,11 +864,11 @@
             function applyTheme(theme) {
                 const isDark = theme === 'dark';
                 document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('kanada-theme', theme);
+                localStorage.setItem('lampung-theme', theme);
                 themeToggleIcon.className = isDark ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
                 themeToggleLabel.textContent = isDark ? 'Gelap' : 'Terang';
                 themeToggle.setAttribute('aria-label', isDark ? 'Ganti ke tema terang' : 'Ganti ke tema gelap');
-                window.dispatchEvent(new CustomEvent('kanada-theme-change', { detail: { theme } }));
+                window.dispatchEvent(new CustomEvent('lampung-theme-change', { detail: { theme } }));
             }
 
             if (themeToggle) {

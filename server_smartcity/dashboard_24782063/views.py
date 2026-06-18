@@ -6,6 +6,15 @@ from django.views.generic import TemplateView
 from main_app.models import Report, STATUS_CHOICES
 
 
+STATUS_LABELS_ID = {
+    'DRAFT': 'Draf',
+    'REPORTED': 'Diajukan',
+    'VERIFIED': 'Diverifikasi',
+    'IN_PROGRESS': 'Diproses',
+    'RESOLVED': 'Selesai',
+}
+
+
 class DashboardView(TemplateView):
     template_name = 'dashboard_24782063/dashboard.html'
 
@@ -39,7 +48,7 @@ class DashboardDataView(View):
             count = status_totals.get(status_value, 0)
             percentage = round((count / total_reports) * 100, 2) if total_reports else 0
 
-            labels.append(status_label)
+            labels.append(STATUS_LABELS_ID.get(status_value, status_label))
             counts.append(count)
             percentages.append(percentage)
 
@@ -71,7 +80,7 @@ class DashboardDataView(View):
                 'category': report.category,
                 'location': report.location,
                 'status': report.status,
-                'status_label': report.get_status_display(),
+                'status_label': STATUS_LABELS_ID.get(report.status, report.get_status_display()),
                 'created_at': report.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             }
             for report in reports

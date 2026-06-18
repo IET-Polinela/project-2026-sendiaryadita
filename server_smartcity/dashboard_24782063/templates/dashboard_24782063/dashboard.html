@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard | KANADA CITY{% endblock %}
+{% block title %}Dashboard | Lampung Tanggap{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -102,11 +102,11 @@
                 <div class="summary-value" id="totalReports">0</div>
             </div>
             <div class="summary-item">
-                <div class="summary-label">Status Reported</div>
+                <div class="summary-label">Status Diajukan</div>
                 <div class="summary-value" id="reportedCount">0</div>
             </div>
             <div class="summary-item">
-                <div class="summary-label">Status Resolved</div>
+                <div class="summary-label">Status Selesai</div>
                 <div class="summary-value" id="resolvedCount">0</div>
             </div>
         </div>
@@ -142,7 +142,7 @@
 
             <div class="col-12 col-xl-6">
                 <div class="dashboard-table-panel">
-                    <h2 class="h5 fw-bold mb-3">5 Laporan Terakhir Dilaporkan</h2>
+                    <h2 class="h5 fw-bold mb-3">5 Laporan Terakhir Diajukan</h2>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead>
@@ -395,7 +395,7 @@
             }
         }
 
-        window.addEventListener('kanada-theme-change', applyChartTheme);
+            window.addEventListener('lampung-theme-change', applyChartTheme);
     });
 </script>
 {% endblock %}

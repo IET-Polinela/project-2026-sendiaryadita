@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Detail Laporan | KANADA CITY{% endblock %}
+{% block title %}Detail Laporan | Lampung Tanggap{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Laporan</a></li>
         <li class="breadcrumb-item active" aria-current="page">Detail</li>
     </ol>
 </nav>
@@ -17,7 +17,7 @@
             <div class="card-body p-4 p-md-5">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
                     <div>
-                        <span class="section-kicker mb-2">Report Detail</span>
+                        <span class="section-kicker mb-2">Detail Laporan</span>
                         <h1 class="h2 fw-bold mb-2">{{ report.title }}</h1>
                         <p class="text-secondary mb-0">
                             Detail lengkap laporan untuk membantu proses pemantauan dan tindak lanjut.
@@ -25,13 +25,13 @@
                     </div>
                     <div>
                         {% if report.status == 'REPORTED' %}
-                            <span class="badge status-pill status-reported fs-6">Reported</span>
+                            <span class="badge status-pill status-reported fs-6">Diajukan</span>
                         {% elif report.status == 'VERIFIED' %}
-                            <span class="badge status-pill status-verified fs-6">Verified</span>
+                            <span class="badge status-pill status-verified fs-6">Diverifikasi</span>
                         {% elif report.status == 'IN_PROGRESS' %}
-                            <span class="badge status-pill status-progress fs-6">In Progress</span>
+                            <span class="badge status-pill status-progress fs-6">Diproses</span>
                         {% elif report.status == 'RESOLVED' %}
-                            <span class="badge status-pill status-resolved fs-6">Resolved</span>
+                            <span class="badge status-pill status-resolved fs-6">Selesai</span>
                         {% endif %}
                     </div>
                 </div>
@@ -83,12 +83,12 @@
                             class="mt-4"
                             method="post"
                             action="{% url 'update_report_status' report.id %}"
-                            onsubmit="return confirm('Ubah status laporan ini menjadi Verified?');"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi Diverifikasi?');"
                         >
                             {% csrf_token %}
                             <input type="hidden" name="status" value="VERIFIED">
                             <button class="btn btn-primary" type="submit">
-                                <i class="bi bi-check-circle me-2"></i>Ubah ke Verified
+                                <i class="bi bi-check-circle me-2"></i>Ubah ke Diverifikasi
                             </button>
                         </form>
                     {% elif report.status == 'VERIFIED' %}
@@ -96,12 +96,12 @@
                             class="mt-4"
                             method="post"
                             action="{% url 'update_report_status' report.id %}"
-                            onsubmit="return confirm('Ubah status laporan ini menjadi In Progress?');"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi Diproses?');"
                         >
                             {% csrf_token %}
                             <input type="hidden" name="status" value="IN_PROGRESS">
                             <button class="btn btn-primary" type="submit">
-                                <i class="bi bi-arrow-repeat me-2"></i>Ubah ke In Progress
+                                <i class="bi bi-arrow-repeat me-2"></i>Ubah ke Diproses
                             </button>
                         </form>
                     {% elif report.status == 'IN_PROGRESS' %}
@@ -109,12 +109,12 @@
                             class="mt-4"
                             method="post"
                             action="{% url 'update_report_status' report.id %}"
-                            onsubmit="return confirm('Ubah status laporan ini menjadi Resolved?');"
+                            onsubmit="return confirm('Ubah status laporan ini menjadi Selesai?');"
                         >
                             {% csrf_token %}
                             <input type="hidden" name="status" value="RESOLVED">
                             <button class="btn btn-success" type="submit">
-                                <i class="bi bi-check2-all me-2"></i>Ubah ke Resolved
+                                <i class="bi bi-check2-all me-2"></i>Ubah ke Selesai
                             </button>
                         </form>
                     {% endif %}

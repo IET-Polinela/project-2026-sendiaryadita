@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Tambah Laporan | KANADA CITY{% endblock %}
+{% block title %}Tambah Laporan | Lampung Tanggap{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Laporan</a></li>
         <li class="breadcrumb-item active" aria-current="page">Tambah Laporan</li>
     </ol>
 </nav>
@@ -15,10 +15,10 @@
     <div class="col-12 col-xl-9">
         <div class="form-panel">
             <div class="card-body p-4 p-md-5">
-                <span class="section-kicker mb-3">Create Report</span>
-                <h1 class="h2 fw-bold mb-2">Tambah Laporan Masalah Kota</h1>
+                <span class="section-kicker mb-3">Buat Laporan</span>
+                <h1 class="h2 fw-bold mb-2">Tambah Laporan Warga</h1>
                 <p class="text-secondary mb-4">
-                    Isi data laporan dengan lengkap agar masalah kota lebih mudah ditinjau dan ditindaklanjuti.
+                    Isi data laporan dengan lengkap agar aspirasi warga lebih mudah ditinjau dan ditindaklanjuti.
                 </p>
 
                 <form method="post" class="report-form" data-loading-text="Loading...">

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Home | KANADA CITY{% endblock %}
+{% block title %}Beranda | Lampung Tanggap{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-4">
@@ -15,13 +16,13 @@
             <div class="card-body p-4 p-md-5">
                 <div class="row align-items-center g-4">
                     <div class="col-lg-8">
-                        <span class="section-kicker mb-3">KANADA CITY</span>
+                        <span class="section-kicker mb-3">Portal Aspirasi Warga</span>
                         <h1 class="display-5 fw-bold mb-3 text-white">
-                            Sistem Pelaporan Masalah Kota yang cepat, rapi, dan mudah dipantau
+                            Pusat pelaporan warga Lampung yang cepat, rapi, dan mudah dipantau
                         </h1>
                         <p class="lead mb-4">
-                            Catat laporan warga, pantau progres penanganan, dan kelola status laporan
-                            dari satu tempat yang lebih jelas.
+                            Catat aspirasi warga, pantau progres penanganan, dan kelola status laporan
+                            dari satu sistem yang lebih jelas.
                         </p>
                         <div class="d-flex flex-wrap gap-3">
                             {% if user.is_authenticated and user.is_admin %}
@@ -35,6 +36,16 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
+                        <div class="hero-photo-card mb-3">
+                            <img
+                                class="hero-photo-image"
+                                src="{% static 'main_app/img/lampung-panorama.webp' %}"
+                                alt="Pemandangan Provinsi Lampung"
+                            >
+                            <div class="hero-photo-badge">
+                                <i class="bi bi-broadcast-pin me-2"></i>Provinsi Lampung
+                            </div>
+                        </div>
                         <div class="hero-aside p-4 h-100">
                             <p class="text-uppercase small fw-semibold mb-2 text-white-50">Akses Cepat</p>
                             <h2 class="h5 fw-semibold mb-3 text-white">Navigasi utama aplikasi</h2>
@@ -49,19 +60,19 @@
                             <div class="row g-2 mt-3">
                                 <div class="col-6">
                                     <div class="mini-card h-100">
-                                        <div class="small text-secondary">Workflow</div>
-                                        <div class="fw-semibold">Status terstruktur</div>
+                                        <div class="small text-secondary">Alur</div>
+                                        <div class="fw-semibold">Status terpantau</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="mini-card h-100">
-                                        <div class="small text-secondary">UI</div>
-                                        <div class="fw-semibold">Responsive layout</div>
+                                        <div class="small text-secondary">Akses</div>
+                                        <div class="fw-semibold">Responsif</div>
                                     </div>
                                 </div>
                             </div>
                             <p class="mb-0 mt-3 text-white-50">
-                                Semua laporan dapat dipantau dari satu sistem dengan alur yang lebih jelas.
+                                Semua laporan publik dapat dipantau dari satu sistem dengan alur yang lebih jelas.
                             </p>
                         </div>
                     </div>

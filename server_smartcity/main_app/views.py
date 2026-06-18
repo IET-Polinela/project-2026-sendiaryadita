@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .models import Report, STATUS_CHOICES
+from .models import Report
 from .forms import ReportForm
 
 
@@ -21,10 +21,18 @@ STATUS_FLOW = {
     'IN_PROGRESS': 'RESOLVED',
 }
 
+STATUS_LABELS_ID = {
+    'DRAFT': 'Draf',
+    'REPORTED': 'Diajukan',
+    'VERIFIED': 'Diverifikasi',
+    'IN_PROGRESS': 'Diproses',
+    'RESOLVED': 'Selesai',
+}
+
 
 def serialize_report(report):
     next_status = STATUS_FLOW.get(report.status)
-    next_status_label = dict(STATUS_CHOICES).get(next_status) if next_status else ''
+    next_status_label = STATUS_LABELS_ID.get(next_status, '') if next_status else ''
 
     return {
         'id': report.id,
@@ -33,7 +41,7 @@ def serialize_report(report):
         'description': report.description,
         'location': report.location,
         'status': report.status,
-        'status_label': report.get_status_display(),
+        'status_label': STATUS_LABELS_ID.get(report.status, report.get_status_display()),
         'created_at': report.created_at.strftime('%Y-%m-%d %H:%M:%S'),
         'detail_url': reverse('report_detail', args=[report.id]),
         'detail_json_url': reverse('report_detail_json', args=[report.id]),
@@ -143,6 +151,6 @@ class ReportUpdateStatusView(AdminRequiredMixin, View):
         if self.status_flow.get(report.status) == new_status:
             report.status = new_status
             report.save()
-            messages.success(request, f'Status laporan berhasil diubah menjadi {report.get_status_display()}.')
+            messages.success(request, f'Status laporan berhasil diubah menjadi {STATUS_LABELS_ID.get(report.status, report.get_status_display())}.')
 
         return redirect('report_list')

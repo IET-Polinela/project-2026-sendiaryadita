@@ -156,11 +156,11 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Smart City Portal API',
-    'DESCRIPTION': 'Dokumentasi REST API resmi untuk Portal Pelaporan Laporan Warga.',
+    'TITLE': 'Lampung Tanggap API',
+    'DESCRIPTION': 'Dokumentasi REST API resmi untuk Portal Aspirasi Warga Lampung.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
 SCALAR_OPENAPI_URL = '/api/schema/'
-SCALAR_TITLE = 'Smart City Portal API Documentation'
+SCALAR_TITLE = 'Dokumentasi API Lampung Tanggap'

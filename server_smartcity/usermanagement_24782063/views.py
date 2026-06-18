@@ -12,7 +12,7 @@ class CitizenLoginView(LoginView):
     redirect_authenticated_user = True
 
     def form_valid(self, form):
-        messages.success(self.request, "Login berhasil. Selamat datang kembali.")
+        messages.success(self.request, "Masuk berhasil. Selamat datang kembali.")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -23,7 +23,7 @@ class CitizenLogoutView(LogoutView):
     next_page = reverse_lazy("login")
 
     def post(self, request, *args, **kwargs):
-        messages.success(request, "Logout berhasil.")
+        messages.success(request, "Keluar berhasil.")
         return super().post(request, *args, **kwargs)
 
 
@@ -34,5 +34,5 @@ class CitizenRegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, "Registrasi berhasil. Silakan login dengan akun baru kamu.")
+        messages.success(self.request, "Registrasi berhasil. Silakan masuk dengan akun baru kamu.")
         return response
