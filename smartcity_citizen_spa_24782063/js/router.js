@@ -140,9 +140,9 @@ const routes = {
 
         <div class="row g-4 dashboard-shell">
             <aside class="col-12 col-lg-3 col-xl-2">
-                <div class="card sidebar-card sticky-top" style="top: 88px;">
+                <div class="card sidebar-card sticky-top" id="summaryStats" style="top: 88px;">
                     <div class="card-body">
-                        <button type="button" class="btn btn-primary new-report-button mb-4" data-bs-toggle="modal" data-bs-target="#reportModal">
+                        <button type="button" id="btnBukaModal" class="btn btn-primary new-report-button mb-4" data-bs-toggle="modal" data-bs-target="#reportModal">
                             <i class="bi bi-plus-circle-fill me-2"></i>Laporan Baru
                         </button>
 

@@ -22,5 +22,17 @@ async function requestAPI(endpoint, method = "GET", bodyData = null) {
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
+    if (response.status === 401) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("username");
+
+        if (typeof updateNavMenus === "function") {
+            updateNavMenus();
+        }
+
+        window.location.hash = "#login";
+    }
+
     return response;
 }
