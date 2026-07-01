@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -53,23 +54,55 @@ def serialize_report(report):
     }
 
 
+def is_admin_user(user):
+    return bool(
+        user
+        and user.is_authenticated
+        and (
+            getattr(user, 'is_admin', False)
+            or user.is_staff
+            or user.is_superuser
+        )
+    )
+
+
+def report_detail_api(request, pk):
+    report = get_object_or_404(Report, pk=pk)
+    return JsonResponse({
+        'report': serialize_report(report),
+    })
+
+
 class AdminRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_admin:
+        if not is_admin_user(request.user):
             messages.error(request, 'Akses ditolak. Fitur ini hanya untuk admin.')
-            return redirect('report_list')
+            return redirect('home')
 
         return super().dispatch(request, *args, **kwargs)
 
 
-class ReportListView(ListView):
+class AdminPageRequiredMixin(AdminRequiredMixin):
+    pass
+
+
+class AdminForbiddenMutationMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not is_admin_user(request.user):
+            messages.error(request, 'Akses ditolak. Fitur ini hanya untuk admin.')
+            return redirect('home')
+
+        raise PermissionDenied
+
+
+class ReportListView(AdminPageRequiredMixin, ListView):
     model = Report
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
     ordering = ['-created_at']
 
 
-class ReportDetailView(DetailView):
+class ReportDetailView(AdminPageRequiredMixin, DetailView):
     model = Report
     template_name = 'main_app/report_detail.html'
     context_object_name = 'report'
@@ -77,6 +110,9 @@ class ReportDetailView(DetailView):
 
 class ReportSearchView(View):
     def get(self, request, *args, **kwargs):
+        if not is_admin_user(request.user):
+            raise PermissionDenied
+
         query = request.GET.get('q', '').strip()
         reports = Report.objects.all().order_by('-created_at')
 
@@ -98,18 +134,14 @@ class ReportSearchView(View):
 
 class ReportDetailJsonView(View):
     def get(self, request, pk, *args, **kwargs):
-        report = get_object_or_404(Report, pk=pk)
-
-        return JsonResponse({
-            'report': serialize_report(report),
-        })
+        return report_detail_api(request, pk)
 
 
 class ReportCreateView(AdminRequiredMixin, CreateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/add_report.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('report_list')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -117,7 +149,7 @@ class ReportCreateView(AdminRequiredMixin, CreateView):
         return response
 
 
-class ReportUpdateView(AdminRequiredMixin, UpdateView):
+class ReportUpdateView(AdminForbiddenMutationMixin, UpdateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/edit_report.html'
@@ -130,11 +162,17 @@ class ReportUpdateView(AdminRequiredMixin, UpdateView):
         return response
 
 
-class ReportDeleteView(AdminRequiredMixin, DeleteView):
+class ReportDeleteView(AdminForbiddenMutationMixin, DeleteView):
     model = Report
     template_name = 'main_app/delete_report.html'
     context_object_name = 'report'
     success_url = reverse_lazy('report_list')
+
+    def get_object(self, queryset=None):
+        if is_admin_user(self.request.user):
+            raise PermissionDenied
+
+        return super().get_object(queryset)
 
     def form_valid(self, form):
         messages.success(self.request, 'Laporan berhasil dihapus.')
