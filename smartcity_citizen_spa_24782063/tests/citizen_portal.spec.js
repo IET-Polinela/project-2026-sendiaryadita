@@ -68,13 +68,15 @@ test.use({
 //     http-server atau Live Server extension.
 // ---------------------------------------------------------------------------
 const BASE_URL = process.env.BASE_URL || 'http://103.151.63.86:8011';
+const DEPLOYED_SPA_BASE_URL = 'https://iet-polinela.github.io/project-2026-sendiaryadita/';
+const VIRTUAL_SPA_BASE_URL = 'http://lampung-tanggap.test/project-2026-sendiaryadita/';
 
 // Path ke file SPA relatif terhadap folder server_smartcity
 // Gunakan salah satu opsi di bawah ini sesuai environment Anda:
 //   Opsi 1 (Live Server): 'http://127.0.0.1:5500/smartcity_citizen_spa/index.html'
 //   Opsi 2 (http-server):  'http://localhost:8080/index.html'
 //   Opsi 3 (file://):      'file:///C:/Users/.../smartcity_citizen_spa/index.html'
-const SPA_URL = process.env.SPA_URL || 'https://iet-polinela.github.io/project-2026-sendiaryadita/';
+const SPA_URL = process.env.SPA_URL || VIRTUAL_SPA_BASE_URL;
 const NAV_OPTIONS = { waitUntil: 'commit', timeout: 30000 };
 
 // ---------------------------------------------------------------------------
@@ -222,6 +224,29 @@ async function clearAuthTokens(page) {
     });
 }
 
+async function serveDeployedSPAOverHttp(page) {
+    if (SPA_URL !== VIRTUAL_SPA_BASE_URL) {
+        return;
+    }
+
+    await page.route(`${VIRTUAL_SPA_BASE_URL}**`, async (route) => {
+        try {
+            const requestUrl = new URL(route.request().url());
+            const assetPath = requestUrl.pathname.replace('/project-2026-sendiaryadita/', '');
+            const targetUrl = new URL(assetPath + requestUrl.search, DEPLOYED_SPA_BASE_URL).toString();
+            const response = await route.fetch({ url: targetUrl });
+
+            await route.fulfill({ response });
+        } catch (error) {
+            await route.abort().catch(() => {});
+        }
+    });
+}
+
+async function clearApiRoutes(page) {
+    await page.unroute('**/api/**').catch(() => {});
+}
+
 /**
  * mockSPAApiUrl - Memastikan SEMUA request API di SPA mengarah ke backend target
  *
@@ -255,6 +280,14 @@ async function mockSPAApiUrl(page) {
         await route.fallback({ url: newUrl });
     });
 }
+
+test.beforeEach(async ({ page }) => {
+    await serveDeployedSPAOverHttp(page);
+});
+
+test.afterEach(async ({ page }) => {
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+});
 
 
 // #############################################################################
@@ -432,7 +465,7 @@ test.describe('Modul 1: Otorisasi & Sesi (AUTH-04, AUTH-05, AUTH-06)', () => {
 
         // Hapus interceptor URL sebelumnya yang meredirect ke localhost
         // Agar mock kita yang prioritas
-        await page.unroute('http://103.151.63.71:8013/api/**');
+        await clearApiRoutes(page);
 
         // Mock SEMUA request ke API endpoint agar mengembalikan 401
         await page.route('**/api/**', async (route) => {
@@ -536,7 +569,7 @@ test.describe('Modul 1: Otorisasi & Sesi (AUTH-04, AUTH-05, AUTH-06)', () => {
         // -------------------------------------------------------------------
         // Karena kedua token expired, server pasti menolak. Kita mock
         // agar test tidak bergantung pada koneksi server yang sebenarnya.
-        await page.unroute('http://103.151.63.71:8013/api/**');
+        await clearApiRoutes(page);
 
         await page.route('**/api/**', async (route) => {
             await route.fulfill({
@@ -902,7 +935,7 @@ test.describe('Modul 5: Interaktivitas UI (UI-01 through UI-06)', () => {
         // -------------------------------------------------------------------
 
         // Hapus route interceptor sebelumnya
-        await page.unroute('http://103.151.63.71:8013/api/**');
+        await clearApiRoutes(page);
 
         // Buat data mock: 25 laporan dummy untuk simulasi pagination
         const mockReports = [];
@@ -1041,7 +1074,7 @@ test.describe('Modul 5: Interaktivitas UI (UI-01 through UI-06)', () => {
         await page.goto(SPA_URL, NAV_OPTIONS);
 
         // Hapus route interceptor sebelumnya
-        await page.unroute('http://103.151.63.71:8013/api/**');
+        await clearApiRoutes(page);
 
         // Mock semua API calls agar tidak gagal
         await page.route('**/api/**', async (route) => {
@@ -1142,7 +1175,7 @@ test.describe('Modul 5: Interaktivitas UI (UI-01 through UI-06)', () => {
         // LANGKAH 1: Setup environment
         // -------------------------------------------------------------------
         await page.goto(SPA_URL, NAV_OPTIONS);
-        await page.unroute('http://103.151.63.71:8013/api/**');
+        await clearApiRoutes(page);
 
         // Variabel untuk tracking apakah POST draft berhasil
         let draftSubmitted = false;
