@@ -44,6 +44,15 @@
 // ---------------------------------------------------------------------------
 const { test, expect } = require('@playwright/test');
 
+test.use({
+    launchOptions: {
+        args: [
+            '--allow-running-insecure-content',
+            '--disable-web-security',
+        ],
+    },
+});
+
 // ---------------------------------------------------------------------------
 // KONSTANTA 
 // ---------------------------------------------------------------------------
@@ -58,14 +67,14 @@ const { test, expect } = require('@playwright/test');
 //     mungkin diblokir oleh kebijakan CORS browser. Disarankan menggunakan
 //     http-server atau Live Server extension.
 // ---------------------------------------------------------------------------
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = process.env.BASE_URL || 'http://103.151.63.86:8011';
 
 // Path ke file SPA relatif terhadap folder server_smartcity
 // Gunakan salah satu opsi di bawah ini sesuai environment Anda:
 //   Opsi 1 (Live Server): 'http://127.0.0.1:5500/smartcity_citizen_spa/index.html'
 //   Opsi 2 (http-server):  'http://localhost:8080/index.html'
 //   Opsi 3 (file://):      'file:///C:/Users/.../smartcity_citizen_spa/index.html'
-const SPA_URL = 'http://127.0.0.1:5500/index.html';
+const SPA_URL = process.env.SPA_URL || 'https://iet-polinela.github.io/project-2026-sendiaryadita/';
 const NAV_OPTIONS = { waitUntil: 'commit', timeout: 30000 };
 
 // ---------------------------------------------------------------------------
@@ -74,10 +83,10 @@ const NAV_OPTIONS = { waitUntil: 'commit', timeout: 30000 };
 // Kredensial untuk akun test yang sudah terdaftar di database Django.
 // Pastikan akun ini ada sebelum menjalankan test, atau gunakan mock API.
 // ---------------------------------------------------------------------------
-const TEST_CITIZEN_USERNAME = 'testwarga';
-const TEST_CITIZEN_PASSWORD = 'testpassword123';
-const TEST_ADMIN_USERNAME  = 'admin';
-const TEST_ADMIN_PASSWORD  = 'admin123';
+const TEST_CITIZEN_USERNAME = process.env.TEST_CITIZEN_USERNAME || 'testwarga';
+const TEST_CITIZEN_PASSWORD = process.env.TEST_CITIZEN_PASSWORD || 'testpassword123';
+const TEST_ADMIN_USERNAME  = process.env.TEST_ADMIN_USERNAME || 'admin';
+const TEST_ADMIN_PASSWORD  = process.env.TEST_ADMIN_PASSWORD || 'admin123';
 
 // ---------------------------------------------------------------------------
 // FAKE JWT TOKENS UNTUK TESTING
@@ -214,25 +223,25 @@ async function clearAuthTokens(page) {
 }
 
 /**
- * mockSPAApiUrl - Memastikan SEMUA request API di SPA mengarah ke localhost:8000
+ * mockSPAApiUrl - Memastikan SEMUA request API di SPA mengarah ke backend target
  *
  * Menggunakan pola wildcard request API, fungsi ini akan mencegat request ke domain apapun
  * (misal: http://103.151.63.71:8013/api, http://192.168.1.5/api, dll)
- * dan membelokkannya secara paksa ke server Django lokal di http://localhost:8000/api.
+ * dan membelokkannya ke backend yang sedang diuji melalui BASE_URL.
  *
  * @param {import('@playwright/test').Page} page - Objek halaman Playwright
  */
 async function mockSPAApiUrl(page) {
-    const BASE_URL = 'http://localhost:8000';
+    const targetBaseUrl = BASE_URL;
 
     // Gunakan wildcard **/api/** untuk menangkap dari host/domain mana saja
     await page.route('**/api/**', async (route) => {
         const originalUrl = route.request().url();
 
         // [PENTING] Mencegah infinite loop: 
-        // Jika request sudah benar mengarah ke localhost:8000, biarkan saja lewat.
-        if (originalUrl.startsWith(BASE_URL)) {
-            return route.continue();
+        // Jika request sudah benar mengarah ke backend target, biarkan saja lewat.
+        if (originalUrl.startsWith(targetBaseUrl)) {
+            return route.fallback();
         }
 
         // Parsing URL asli menggunakan objek URL bawaan JavaScript
@@ -240,10 +249,10 @@ async function mockSPAApiUrl(page) {
         
         // urlObj.pathname akan mengambil "/api/endpoint/"
         // urlObj.search akan mengambil query string (misal: "?search=jalan") jika ada
-        const newUrl = `${BASE_URL}${urlObj.pathname}${urlObj.search}`;
+        const newUrl = `${targetBaseUrl}${urlObj.pathname}${urlObj.search}`;
 
-        // Lanjutkan request dengan URL yang sudah dibelokkan ke localhost
-        await route.continue({ url: newUrl });
+        // Lanjutkan request dengan URL yang sudah dibelokkan ke backend target
+        await route.fallback({ url: newUrl });
     });
 }
 
@@ -668,6 +677,36 @@ test.describe('Modul 5: Interaktivitas UI (UI-01 through UI-06)', () => {
         //
         await expect(statusChartCanvas).toBeVisible({ timeout: 15000 });
         await expect(categoryChartCanvas).toBeVisible({ timeout: 15000 });
+
+        await page.waitForFunction(() => {
+            const statusCanvas = document.getElementById('statusChart');
+            const categoryCanvas = document.getElementById('categoryChart');
+
+            if (!statusCanvas || !categoryCanvas) {
+                return false;
+            }
+
+            const statusRect = statusCanvas.getBoundingClientRect();
+            const categoryRect = categoryCanvas.getBoundingClientRect();
+            const canvasHasSize =
+                statusRect.width > 0 &&
+                statusRect.height > 0 &&
+                categoryRect.width > 0 &&
+                categoryRect.height > 0;
+
+            if (!canvasHasSize) {
+                return false;
+            }
+
+            if (typeof Chart !== 'undefined' && typeof Chart.getChart === 'function') {
+                return Boolean(
+                    Chart.getChart(statusCanvas) &&
+                    Chart.getChart(categoryCanvas)
+                );
+            }
+
+            return true;
+        }, null, { timeout: 15000 });
 
         // -------------------------------------------------------------------
         // LANGKAH 5: Verifikasi tambahan - cek bahwa canvas sudah di-render

@@ -206,7 +206,14 @@ const routes = {
 };
 
 function handleRouting() {
-    const hash = window.location.hash || "#login";
+    let hash = window.location.hash || "#login";
+    const accessToken = localStorage.getItem("access_token");
+
+    if (hash === "#dashboard" && !accessToken) {
+        window.location.hash = "#login";
+        hash = "#login";
+    }
+
     document.getElementById("app-content").innerHTML = routes[hash] || routes["#login"];
 
     if (typeof updateNavMenus === "function") {
